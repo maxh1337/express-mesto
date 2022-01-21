@@ -8,7 +8,7 @@ const { ValidationError } = require('../errors/validation-err');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  const { NODE_ENV, JWT_SECRET = 'secret-key', JWT_DEV } = process.env;
+  const { NODE_ENV, JWT_SECRET = 'secret-key', JWT_DEV = 'test' } = process.env;
 
   User.findUserByCredentials(email, password)
     .then((user) => {
@@ -44,7 +44,7 @@ const createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные при создании пользователя'));
       }
-      if (err.name === 'MongoError' && err.code === 11000) {
+      if (err.code === 11000) {
         next(new ExistFieldError('Email уже существует'));
       } else {
         next(err);
@@ -64,7 +64,7 @@ const getMe = (req, res, next) => {
     .orFail(() => next(new NotFoundError('Пользователь по указанному _id не найден')))
     .then((data) => res.send({ data }))
     .catch((err) => {
-      if (err.name === 'CastError') next(new CastError('Невалидный id пользователя'));
+      if (err.name === 'CastError') next(new CastError('Невалидный id пользователя')); else { next(err); }
     });
 };
 
