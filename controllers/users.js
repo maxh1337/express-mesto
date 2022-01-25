@@ -8,7 +8,7 @@ const { ValidationError } = require('../errors/validation-err');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  const { NODE_ENV, JWT_SECRET = 'secret-key', JWT_DEV = 'test' } = process.env;
+  const { NODE_ENV, JWT_SECRET = 'secret-key', JWT_DEV = 'dev-key' } = process.env;
 
   User.findUserByCredentials(email, password)
     .then((user) => {
